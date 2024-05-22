@@ -92,7 +92,7 @@ int Time::getPosition(vector<double> *s)
 {
   if (nslice<1){nslice=1;} 
   s->resize(nslice);
-  for (int i=0;i <nslice; i++){
+  for (size_t i=0;i <nslice; i++){
     s->at(i)=s0+i*ds;
   }
   return nslice;

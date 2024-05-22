@@ -100,7 +100,7 @@ public:
 private:
     std::vector<double> val;
     double def;
-    int  i;
+    size_t i;
 };
 
 inline void SequenceList::init(std::vector<double> &val_in, double def_in)

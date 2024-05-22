@@ -18,10 +18,10 @@ bool WriteFieldHDF5::write(string fileroot, vector<Field *> *field)
   }
 
   // loop over all fields (= all harmonics)
-  for (int i=0; i<field->size();i++){
-    int harm=field->at(i)->harm;
+  for (size_t i=0; i<field->size();i++){
+    size_t harm=field->at(i)->harm;
     char charm[10];
-    sprintf(charm,".h%d",harm);
+    snprintf(charm, sizeof(charm), ".h%zu", harm);
     if (harm==1){
       file=fileroot;
     } else {
@@ -50,9 +50,9 @@ bool WriteFieldHDF5::writeMain(string fileroot, Field *field)
 
 
   s0=rank;
-  int ntotal=size*field->field.size();
-  int smin=rank*field->field.size();
-  int smax=smin+field->field.size();
+  size_t ntotal=size*field->field.size();
+  size_t smin=rank*field->field.size();
+  size_t smax=smin+field->field.size();
 
   // write global data
   hid_t gid=H5Gcreate(fid,"Meta",H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
@@ -72,11 +72,11 @@ bool WriteFieldHDF5::writeMain(string fileroot, Field *field)
   if(field->dumpFieldEnabled())
   {
     // loop through slices
-    for (int i=0; i<ntotal;i++)
+    for (size_t i=0; i<ntotal;i++)
     {
       s0=-1;
       char name[16];
-      sprintf(name,"slice%6.6d",i+1);
+      snprintf(name, sizeof(name), "slice%6.6zu", i+1);
       gid=H5Gcreate(fid,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
       if ((i>=smin) && (i<smax)){
@@ -86,14 +86,14 @@ bool WriteFieldHDF5::writeMain(string fileroot, Field *field)
       int islice= (i+field->first) % field->field.size() ;   // include the rotation due to slippage
 
       if (s0==0){
-        for (int j=0; j<ngrid*ngrid;j++){ 
+        for (size_t j=0; j<ngrid*ngrid;j++){ 
           work[j]=scl*field->field.at(islice).at(j).real();
         }  
       }
       this->writeSingleNode(gid,"field-real"," ",&work);     
 
       if (s0==0){
-        for (int j=0; j<ngrid*ngrid;j++){ 
+        for (size_t j=0; j<ngrid*ngrid;j++){ 
           work[j]=scl*field->field.at(islice).at(j).imag();
         }  
       }

@@ -99,16 +99,16 @@ bool Track::init(int inrank, int insize, map<string,string> *arg, Beam *beam, ve
   }
   if (ssrun){    // disable global output when there is only one slice calculated 
     beam->set_global_stat(false);
-    for (int i=0; i<field->size();i++){
+    for (size_t i=0; i<field->size();i++){
       field->at(i)->set_global_stat(false);
     }
   } else {
     beam->set_global_stat(setup->getBeamGlobalStat());
-    for (int i=0; i<field->size();i++){
+    for (size_t i=0; i<field->size();i++){
       field->at(i)->set_global_stat(setup->getFieldGlobalStat());
     }
   } 
-  for (int i=0; i<field->size();i++){
+  for (size_t i=0; i<field->size();i++){
     field->at(i)->setOutput(
        setup->outputFFT(),
        setup->outputSpatial(),

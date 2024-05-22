@@ -500,7 +500,7 @@ int genmain (string inputfile, map<string,string> &comarg, bool split) {
     delete beam;
 
     // release memory allocated for fields
-    for (int i = 0; i < field.size(); i++) {
+    for (size_t i=0; i < field.size(); i++) {
     delete field[i];
 }
 
@@ -552,7 +552,7 @@ int genmain (string inputfile, map<string,string> &comarg, bool split) {
 	  cout << "==========================" << endl;
 	  cout << setw(10) << "Event" << setw(8) << "dT (s)" << endl;
 	  cout << "--------------------------" << endl;
-	  for (int i=0; i<evtime.size(); i++){
+	  for (size_t i=0; i<evtime.size(); i++){
 	    cout << setw(10) << event[i] << setw(8) << evtime[i]/CLOCKS_PER_SEC << " " << endl;
 	  }
 	  cout << "--------------------------" << endl;

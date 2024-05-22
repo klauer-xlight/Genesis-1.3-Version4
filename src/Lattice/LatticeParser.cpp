@@ -47,7 +47,7 @@ bool LatticeParser::parse(string file, string line, int rank, vector<Element *> 
   }
 
 
-  for (int i=0; i<comstring.size();i++){ // convert to lower case
+  for (size_t i=0; i<comstring.size();i++){ // convert to lower case
     comstring[i]=tolower(comstring[i]);
   }
 
@@ -76,7 +76,7 @@ bool LatticeParser::parse(string file, string line, int rank, vector<Element *> 
   string inlabel, intype, inargument;
   bool error=false;
  
-  for(int i=0;i<content.size();i++){
+  for(size_t i=0;i<content.size();i++){
     
     if ((pos=content[i].find_first_of(':'))==string::npos){
       if (rank==0){ cout<< "*** Error: Invalid Format in lattice file: " << content[i] << endl;}
@@ -131,7 +131,7 @@ bool LatticeParser::parse(string file, string line, int rank, vector<Element *> 
 
   
   int recursion = 20;
-  for (int i=0;i<label.size();i++){
+  for (size_t i=0;i<label.size();i++){
     if (type[i].compare("line")!=0){
       error=this->resolve(i,recursion-1,rank);
       if (error==false){ return false; }
@@ -142,7 +142,7 @@ bool LatticeParser::parse(string file, string line, int rank, vector<Element *> 
   // --------------------------------------------------------------
   // step 4 - unrolling the line
   
-  for (int i=0;i<line.size();i++){
+  for (size_t i=0;i<line.size();i++){
     line[i]=tolower(line[i]);      
   }
 
@@ -168,7 +168,7 @@ bool LatticeParser::parse(string file, string line, int rank, vector<Element *> 
 
   double z;
   
-  for (int i=0;i<sequence.size();i++){
+  for (size_t i=0;i<sequence.size();i++){
     if (zref[i]<0){
       z=0+zoff[i];
     } else {
@@ -224,7 +224,7 @@ ID *LatticeParser::parseID(int idx,int rank, double zin, SeriesManager *sm)
   bool haskx = false;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -302,7 +302,7 @@ Corrector *LatticeParser::parseCorrector(int idx,int rank, double zin)
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -338,7 +338,7 @@ Chicane *LatticeParser::parseChicane(int idx,int rank, double zin)
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -372,7 +372,7 @@ Marker *LatticeParser::parseMarker(int idx,int rank, double zin)
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -409,7 +409,7 @@ Drift *LatticeParser::parseDrift(int idx,int rank, double zin)
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -443,7 +443,7 @@ Quadrupole *LatticeParser::parseQuad(int idx,int rank, double zin)
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -478,7 +478,7 @@ Phaseshifter *LatticeParser::parsePhaseshifter(int idx,int rank, double zin, Ser
   string fld,val;
 
   this->chop(argument[idx],&par);
-  for (int i=0;i<par.size();i++){
+  for (size_t i=0;i<par.size();i++){
     size_t pos=par[i].find_first_of("=");
     if (pos==string::npos){
       if (rank==0){cout << "*** Warning: Ignoring invalid format: " << par[i] << " for element " << label[idx]<< endl;}
@@ -511,7 +511,7 @@ bool LatticeParser::resolve(int idx, int recursion, int rank)
   this->chop(argument[idx], &arg1);
 
   string ref;
-  for (int i=0; i< arg1.size(); i++){
+  for (size_t i=0; i< arg1.size(); i++){
     pos=arg1[i].find("ref");
     if (pos !=string::npos){
       pos=arg1[i].find_first_of("=");
@@ -530,7 +530,7 @@ bool LatticeParser::resolve(int idx, int recursion, int rank)
   if (this->resolve(iref,recursion-1,rank)==false) {return false;}
 
   argument[idx]=argument[iref];  
-  for (int i=0; i< arg1.size(); i++){
+  for (size_t i=0; i< arg1.size(); i++){
     argument[idx].append(",");
     argument[idx].append(arg1[i]);
   }
@@ -553,8 +553,13 @@ bool LatticeParser::unroll(int idx, int recursion,int rank){
 
   int refelesave=refele;  // safe the index to the last element. Is initialized to -1 at start
 
-  for (int i=0; i<line.size();i++){
+  for (size_t i=0; i<line.size();i++){
     int count = checkMultiplier(&line[i]);  // check for multiplier
+    if (count <= 0) {
+      if (rank==0) {cout << "*** Error: element with repeat count < 0 in beamline: " << line[i] << endl;}
+      return false;
+    }
+    size_t multiplier = (size_t)count;
     double off;
     bool resetpos = checkResetPosition(&line[i], &off);
     int ix=this->findIndex(&label,line[i]);
@@ -564,12 +569,12 @@ bool LatticeParser::unroll(int idx, int recursion,int rank){
       return false;
     }
     if (type[ix].compare("line")==0){
-      for (int j=0; j < count ; j++){
+      for (size_t j=0; j < multiplier; j++){
 	bool error=this->unroll(ix,recursion-1,rank);
 	if (error==false) { return error; }
       }
     } else {
-      for (int j=0; j < count ; j++){
+      for (size_t j=0; j < multiplier ; j++){
         sequence.push_back(line[i]); 
 	if (resetpos) {
 	  zref.push_back(refelesave);
@@ -590,7 +595,7 @@ bool LatticeParser::unroll(int idx, int recursion,int rank){
 
   int refelesave=refele;
 
-  for (int i=0; i<line.size();i++){
+  for (size_t i=0; i<line.size();i++){
 
     int count = checkMultiplier(&line[i]);  // check if a line has a multiplier
     bool resetpos = checkResetPosition(&line[i]);
@@ -599,7 +604,7 @@ bool LatticeParser::unroll(int idx, int recursion,int rank){
       if (rank==0) {cout << "*** Error: Undefined element in beamline: " << line[i] << endl;}
       return false;
     }
-    for (int j=0; j < count ; j++){
+    for (size_t j=0; j < count ; j++){
       if (type[ix].compare("line")==0){
         bool error=this->unroll(ix,recursion-1,rank);
         if (error==false) { return error; }

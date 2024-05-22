@@ -24,7 +24,7 @@ void QuietLoading::init(bool one4one, int *base)
   if (one4one){
      RandomU rseed(base[0]);
      double val;
-     for (int i=0; i<=base[1];i++){
+     for (size_t i=0; i<=base[1];i++){
         val=rseed.getElement();
      }
      val*=1e9;
@@ -47,7 +47,7 @@ void QuietLoading::init(bool one4one, int *base)
 
 }
 
-void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nbins, double theta0, int islice)
+void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, size_t npart, size_t nbins, double theta0, size_t islice)
 {
 
 
@@ -64,13 +64,13 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   spx->set(iseed);
   spy->set(iseed);
 
-  int mpart=npart/nbins;
+  size_t mpart=npart/nbins;
 
   Inverfc erf;
 
   double dtheta=1./static_cast<double>(nbins);
   // raw distribution
-   for (int i=0;i <mpart; i++){
+   for (size_t i=0;i <mpart; i++){
     beam[i].theta=st->getElement()*dtheta;
     beam[i].gamma=erf.value(2*sg->getElement());
     beam[i].x    =erf.value(2*sx->getElement());
@@ -92,7 +92,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
 
   // energy
 
-  for (int i=0; i<mpart; i++){
+  for (size_t i=0; i<mpart; i++){
     z +=beam[i].gamma;
     zz+=beam[i].gamma*beam[i].gamma;
   }
@@ -103,7 +103,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   if (zz>0){ zz=1/zz;}
   zz*=slice->delgam;
 
-  for (int i=0; i<mpart; i++){
+  for (size_t i=0; i<mpart; i++){
     beam[i].gamma= (beam[i].gamma-z)*zz+slice->gamma;
   }
 
@@ -113,7 +113,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   double p=0;
   double zp=0;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     z +=beam[i].x;
     zz+=beam[i].x*beam[i].x;
     p +=beam[i].px;
@@ -125,7 +125,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   if (zz>0) {zz=1./zz;}
   zp=(zp*norm-z*p)*zz*zz;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     beam[i].px=beam[i].px-p;
     beam[i].px-=zp*beam[i].x;
     beam[i].x=(beam[i].x-z)*zz;
@@ -137,7 +137,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   p=0;
   zp=0;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     z +=beam[i].y;
     zz+=beam[i].y*beam[i].y;
     p +=beam[i].py;
@@ -149,7 +149,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   if (zz>0) {zz=1./zz;}
   zp=(zp*norm-z*p)*zz*zz;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     beam[i].py=beam[i].py-p;
     beam[i].py-=zp*beam[i].y;
     beam[i].y=(beam[i].y-z)*zz;
@@ -161,7 +161,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   p = 0;
   double pp= 0 ;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     z +=beam[i].px;
     zz+=beam[i].px*beam[i].px;
     p +=beam[i].py;
@@ -174,7 +174,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   pp=sqrt(fabs(pp*norm-p*p));
   if (pp>0) {pp=1./pp;}
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     beam[i].px=(beam[i].px-z)*zz;
     beam[i].py=(beam[i].py-p)*pp;
   }
@@ -189,7 +189,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
   double corx=-slice->alphax/slice->betax;
   double cory=-slice->alphay/slice->betay;
 
-  for (int i=0; i<mpart;i++){
+  for (size_t i=0; i<mpart;i++){
     beam[i].x *=sigx;
     beam[i].y *=sigy;
     beam[i].px=sigpx*beam[i].px+corx*beam[i].x;
@@ -204,10 +204,10 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
 
   // mirror particles for quiet loading
 
-  for (int i=mpart; i>0; i--){
-    int i1=i-1;
-    int i2=nbins*i1;
-    for (int j=0;j<nbins;j++){
+  for (size_t i=mpart; i>0; i--){
+    size_t i1=i-1;
+    size_t i2=nbins*i1;
+    for (size_t j=0;j<nbins;j++){
       beam[i2+j].gamma=beam[i1].gamma;
       beam[i2+j].x    =beam[i1].x;
       beam[i2+j].y    =beam[i1].y;
@@ -220,7 +220,7 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
 
   // scale phase
 
-  for (int i=0;i<npart;i++){
+  for (size_t i=0;i<npart;i++){
     beam[i].theta*=theta0;
   }
 
@@ -246,12 +246,12 @@ void QuietLoading::loadQuiet(Particle *beam, BeamSlice *slice, int npart, int nb
 
   if ((blocal!=0)||(slice->emod!=0)) {
       if (slice->bunch > 0.1) {
-          for (int i = 0; i < npart; i++) {
+          for (size_t i=0; i < npart; i++) {
               beam[i].gamma -= slice->emod * sin(beam[i].theta - slice->emodphase);
               beam[i].theta += -blocal * beam[i].theta + blocal * pi + slice->bunchphase+pi;
           }
       } else {
-          for (int i = 0; i < npart; i++) {
+          for (size_t i=0; i < npart; i++) {
               beam[i].gamma -= slice->emod * sin(beam[i].theta - slice->emodphase);
               beam[i].theta-=2*slice->bunch*sin(beam[i].theta-slice->bunchphase);
           }

@@ -187,7 +187,7 @@ bool Setup::RootName_to_FileName(string *fn_out, string *filename)
 {
     // replace placeholder symbol @ with rootname
     std::string placeholder("@");
-    int pos;
+    size_t pos;
     while ((pos = filename->find(placeholder)) != std::string::npos)
         filename->replace(pos, placeholder.length(),rootname);
 

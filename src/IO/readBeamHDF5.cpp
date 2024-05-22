@@ -121,7 +121,7 @@ bool ReadBeamHDF5::readSlice(double s, vector<Particle> *slice, double *current,
 
   // get size of data set from slice
   char name[20];
-  sprintf(name,"slice%6.6d/gamma",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/gamma",islice);
 
   int nsize=getDatasetSize(fid, name);
 
@@ -139,43 +139,43 @@ bool ReadBeamHDF5::readSlice(double s, vector<Particle> *slice, double *current,
   slice->resize(nsize);
 
   // get current   
-  sprintf(name,"slice%6.6d/current",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/current",islice);
   readDataDouble(fid,name,current,1);
   *current*=wei;
 
-  sprintf(name,"slice%6.6d/gamma",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/gamma",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).gamma=work[i];
   }
   
-  sprintf(name,"slice%6.6d/theta",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/theta",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).theta=work[i];
   }
 
-  sprintf(name,"slice%6.6d/x",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/x",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).x=work[i]*wei;
   }
 
-  sprintf(name,"slice%6.6d/y",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/y",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).y=work[i]*wei;
   }
 
-  sprintf(name,"slice%6.6d/px",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/px",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).px=work[i]*wei;
   }
 
-  sprintf(name,"slice%6.6d/py",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/py",islice);
   readDataDouble(fid,name,work,nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     slice->at(i).py=work[i]*wei;
   }
   

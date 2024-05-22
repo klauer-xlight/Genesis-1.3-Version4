@@ -39,7 +39,7 @@ bool Profile::init(int rank, map<string,string> *arg,string element)
     f=static_cast<ProfileFile *>(p);
     if (f->names.size()>0){
       map<string,string> derivedArg;
-      for (int i=0; i < f->names.size(); i++){
+      for (size_t i=0; i < f->names.size(); i++){
 	derivedArg.clear();
 	derivedArg["label"]=f->names[i];
         stringstream ss(f->xdataset);
@@ -147,7 +147,7 @@ string ProfilePolynom::init(int rank, map<string,string>*arg)
   string label="";
   map<string,string>::iterator end=arg->end();
   c.resize(5);
-  for (int i=0; i< c.size();i++){ c[i]=0;}
+  for (size_t i=0; i< c.size();i++){ c[i]=0;}
   
 
   if (arg->find("label")!=end){label = arg->at("label");  arg->erase(arg->find("label"));}
@@ -173,7 +173,7 @@ double ProfilePolynom::value(double z)
 {
   double val=0;
   double zsave=1;
-  for (int i=0;i<c.size();i++){
+  for (size_t i=0;i<c.size();i++){
     val+=c[i]*zsave;
     zsave*=z;
   }
@@ -373,7 +373,7 @@ string ProfileFile::init(int rank, map<string,string>*arg)
 
 
   if (isTime){ 
-    for (int i=0; i<xdat.size();i++){
+    for (size_t i=0; i<xdat.size();i++){
       xdat[i]*=299792458.0;         // scale time variable to space varial by multiplying the speed of light
     }  
   }
@@ -383,7 +383,7 @@ string ProfileFile::init(int rank, map<string,string>*arg)
     double xmax=xdat[xdat.size()-1];
     reverse(xdat.begin(),xdat.end());
     reverse(ydat.begin(),ydat.end());
-    for (int i=0;i<xdat.size();i++){
+    for (size_t i=0;i<xdat.size();i++){
       xdat[i]=-xdat[i]+xmin+xmax;    // get the correct time window
     }
   }

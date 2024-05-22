@@ -74,7 +74,7 @@ bool ImportBeam::init(int rank, int size, map<string,string> *arg, Beam *beam, S
   beam->initSorting(rank,size,false,one4one);  // sorting routine is initialized, with default values to suppress field slippage but do sorting if one4
 
 
-  for (int j=0; j<time->getNodeNSlice(); j++){
+  for (size_t j=0; j<time->getNodeNSlice(); j++){
     int i=j+time->getNodeOffset();
     double sloc=s[i];
     import.readSlice(s[i],&beam->beam[j],&beam->current[j],one4one);

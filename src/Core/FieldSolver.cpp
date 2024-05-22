@@ -92,7 +92,7 @@ void FieldSolver::ADI(vector<complex<double> > &crfield)
 
 
 void FieldSolver::tridagx(vector<complex<double > > &u) {
-    for (int i = 0; i < ngrid * (ngrid - 1); i += ngrid) {
+    for (size_t i=0; i < ngrid * (ngrid - 1); i += ngrid) {
         u[i] = r[i] * cbet[0];
         for (int k = 1; k < ngrid; k++) {
             u[k + i] = (r[k + i] - c[k] * u[k + i - 1]) * cbet[k];
@@ -104,18 +104,18 @@ void FieldSolver::tridagx(vector<complex<double > > &u) {
 }
 
 void FieldSolver::tridagy(vector<complex<double > > &u) {
-    for (int i = 0; i < ngrid; i++) {
+    for (size_t i=0; i < ngrid; i++) {
         u[i] = r[i] * cbet[0];
     }
     for (int k = 1; k < ngrid - 1; k++) {
         int n = k * ngrid;
-        for (int i = 0; i < ngrid; i++) {
+        for (size_t i=0; i < ngrid; i++) {
             u[n + i] = (r[n + i] - c[k] * u[n + i - ngrid]) * cbet[k];
         }
     }
     for (int k = ngrid - 2; k >= 0; k--) {
         int n = k * ngrid;
-        for (int i = 0; i < ngrid; i++) {
+        for (size_t i=0; i < ngrid; i++) {
             u[n + i] -= cwet[k + 1] * u[n + i + ngrid];
         }
     }
@@ -159,7 +159,7 @@ void FieldSolver::getDiag(double delz,double dgrid, double xks, int ngrid_in) {
     mmid[ngrid - 1] = -2 * rtmp;
     mlow[ngrid - 1] = rtmp;
 
-    for (int i = 0; i < ngrid; i++) {
+    for (size_t i=0; i < ngrid; i++) {
         cwrk1[i] = complex<double>(0, -mupp[i]);
         cwrk2[i] = complex<double>(1, -mmid[i]);
         c[i] = complex<double>(0, -mlow[i]);

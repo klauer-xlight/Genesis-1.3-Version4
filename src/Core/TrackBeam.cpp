@@ -63,8 +63,8 @@ void TrackBeam::track(double delz, Beam *beam,Undulator *und,bool lastStep=true)
     }
   }
 
-  for (int i=0; i<beam->beam.size();i++){
-    for (int j=0; j<beam->beam.at(i).size();j++){
+  for (size_t i=0; i<beam->beam.size();i++){
+    for (size_t j=0; j<beam->beam.at(i).size();j++){
       Particle *p=&beam->beam.at(i).at(j);
       double gammaz=sqrt(p->gamma*p->gamma-1- aw*aw - p->px*p->px - p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
 #ifdef G4_DBGDIAG
@@ -118,8 +118,8 @@ void TrackBeam::applyDQuad(double delz, double qf, double *x, double *px, double
 void TrackBeam::applyCorrector(Beam *beam, double cx, double cy)
 { 
 
-  for (int i=0; i<beam->beam.size();i++){
-    for (int j=0; j<beam->beam.at(i).size();j++){
+  for (size_t i=0; i<beam->beam.size();i++){
+    for (size_t j=0; j<beam->beam.at(i).size();j++){
       beam->beam.at(i).at(j).px+=cx;
       beam->beam.at(i).at(j).py+=cy;
     }
@@ -148,8 +148,8 @@ void TrackBeam::applyChicane(Beam *beam, double angle, double lb, double ld, dou
   double en[4][4];
 
   // construct the transfer matrix
-  for (int i=0; i<4;i++){
-    for (int j=0; j<4; j++){
+  for (size_t i=0; i<4;i++){
+    for (size_t j=0; j<4; j++){
       m[i][j]=0;
       d1[i][j]=0;
       d2[i][j]=0;
@@ -220,8 +220,8 @@ void TrackBeam::applyChicane(Beam *beam, double angle, double lb, double ld, dou
   this->matmul(m,d3);  // transport backwards because the main tracking still has to do the drift
   
 
-  for (int i=0; i<beam->beam.size();i++){
-    for (int j=0; j<beam->beam.at(i).size();j++){
+  for (size_t i=0; i<beam->beam.size();i++){
+    for (size_t j=0; j<beam->beam.at(i).size();j++){
       Particle *p=&beam->beam.at(i).at(j);
       double gammaz=sqrt(p->gamma*p->gamma-1- p->px*p->px - p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
 
@@ -242,16 +242,16 @@ void TrackBeam::matmul(double m[][4], double e[][4])
 {
   double t[4][4];
 
-  for (int i=0;i<4;i++){
-    for (int j=0; j<4;j++){
+  for (size_t i=0;i<4;i++){
+    for (size_t j=0; j<4;j++){
       t[i][j]=0;
-      for (int k=0;k<4;k++){
+      for (size_t k=0;k<4;k++){
 	t[i][j]+=e[i][k]*m[k][j];
       }
     }
   }
-  for (int i=0;i<4;i++){
-    for (int j=0; j<4;j++){
+  for (size_t i=0;i<4;i++){
+    for (size_t j=0; j<4;j++){
       m[i][j]=t[i][j];
     }
   }
@@ -267,8 +267,8 @@ void TrackBeam::applyR56(Beam *beam, Undulator *und, double lambda0)
   double R56=(4*lb/sin(angle)*(1-angle/tan(angle))+2*ld*tan(angle)/cos(angle))*angle;
   //    cout << "R56: " << R56 << endl;
   R56=R56*4*asin(1)/lambda0/gamma0;
-  for (int i=0; i<beam->beam.size();i++){
-    for (int j=0; j<beam->beam.at(i).size();j++){
+  for (size_t i=0; i<beam->beam.size();i++){
+    for (size_t j=0; j<beam->beam.at(i).size();j++){
       beam->beam.at(i).at(j).theta+=R56*(beam->beam.at(i).at(j).gamma-gamma0);
     }
   }

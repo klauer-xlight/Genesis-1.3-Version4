@@ -2,6 +2,7 @@
 // Created by reiche on 06.01.22.
 //
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <complex>
@@ -66,12 +67,17 @@ void Diagnostic::init(int rank, int size, int nz_in, int ns_in, int nfld,bool is
     // lock the vectors holding the instances of diagnostic classes
     diag_can_add=false;
 
+    assert(size >= 0);
+    assert(nz_in >= 0);
+    assert(ns_in >= 0);
+    assert(nfld >= 0);
+
  //   FilterDiagnostics filter;
-    nz = nz_in;
-    ns = ns_in;
+    nz = (size_t)nz_in;
+    ns = (size_t)ns_in;
     time = isTime;
     scan = isScan;
-    noff =rank*ns; // CL, 2023-10-15: kept caller-provided MPI rank here (for the time being)
+    noff = (size_t)(rank*ns); // CL, 2023-10-15: kept caller-provided MPI rank here (for the time being)
     ntotal = ns * size;
     val.clear();
     units.clear();
@@ -186,7 +192,7 @@ bool Diagnostic::writeToOutputFile(Beam *beam, vector<Field*> *field, Setup *set
     global[0] = scan ? 1. : 0 ;
     this->addOutput(1,"scan"," ",global);
     global.resize(ntotal);
-    for (int i=0; i<ntotal; i++){
+    for (size_t i=0; i<ntotal; i++){
         global[i]=static_cast<double>(i)*beam->slicelength;
     }
     this->addOutput(1,"s","m",global);
@@ -195,7 +201,7 @@ bool Diagnostic::writeToOutputFile(Beam *beam, vector<Field*> *field, Setup *set
     if (ntotal == 1) {
         df=0;
     }
-    for (int i=0; i<ntotal; i++){
+    for (size_t i=0; i<ntotal; i++){
       global[i]=e0+static_cast<double>(i)*df-0.5*df*static_cast<double>(ntotal);
     }
     this->addOutput(1,"frequency","eV",global);
@@ -357,7 +363,7 @@ std::map<std::string,OutputInfo> DiagBeam::getTags(FilterDiagnostics & filter_in
 void DiagBeam::getValues(Beam *beam,std::map<std::string,std::vector<double> >&val, int iz)
 {
 
-    int ns = beam->beam.size();
+    size_t ns = beam->beam.size();
     int is=0;
     std::vector<complex<double> > b(nharm);
     double g_cur=0;
@@ -683,7 +689,7 @@ std::map<std::string,OutputInfo> DiagField::getTags(FilterDiagnostics & filter_i
 
 void DiagField::getValues(Field *field,std::map<std::string,std::vector<double> >&val, int iz){
 
-    int ns = field->field.size();
+    size_t ns = field->field.size();
     int is0 = 0;
     int ngrid = field->ngrid;
 

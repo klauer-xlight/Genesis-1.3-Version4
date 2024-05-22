@@ -31,7 +31,7 @@ void Beam::init(int nsize, int nbins_in, double reflen_in, double slicelen_in, d
     current.resize(nsize);
     eloss.resize(nsize);
     longESC.resize(nsize);  // array to hold long range space charge field
-    for (int i = 0; i < nsize; i++) {
+    for (size_t i=0; i < nsize; i++) {
         eloss[i] = 0;
         longESC[i] = 0;
     }
@@ -84,8 +84,8 @@ int Beam::sort()
   double dQ=ce/slicelength;
   if (one4one){
     shift= sorting.sort(&beam);
-    for (int i=0; i<beam.size();i++){    // correct the local current
-      int np=beam.at(i).size();
+    for (size_t i=0; i<beam.size();i++){    // correct the local current
+      size_t np=beam.at(i).size();
       current.at(i)=static_cast<double>(np)*ce/slicelength;
     }
     col.forceUpdate();
@@ -192,8 +192,8 @@ bool Beam::harmonicConversion(int harmonic, bool resample)
   if (resample){ 
     slicelength=slicelength/static_cast<double>(harmonic);
   }
-  for (int i=0; i<beam.size(); i++){
-    for (int j=0; j<beam[i].size();j++){
+  for (size_t i=0; i<beam.size(); i++){
+    for (size_t j=0; j<beam[i].size();j++){
       beam[i].at(j).theta*=static_cast<double>(harmonic); 
     }
   }
@@ -203,7 +203,7 @@ bool Beam::harmonicConversion(int harmonic, bool resample)
   report_storage("before harmonic upconversion");
 
   // blowing up the slice number
-  int nsize=beam.size();
+  size_t nsize=beam.size();
 
   beam.resize(harmonic*nsize);
   current.resize(harmonic*nsize);
@@ -252,8 +252,8 @@ bool Beam::subharmonicConversion(int harmonic, bool resample)
   }
 
 
-  for (int i=0; i<beam.size(); i++){
-    for (int j=0; j<beam[i].size();j++){
+  for (size_t i=0; i<beam.size(); i++){
+    for (size_t j=0; j<beam[i].size();j++){
       beam[i].at(j).theta/=static_cast<double>(harmonic);   // preparing to push everything into first slice
     }
   }
@@ -263,7 +263,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample)
   col.clearWake();  // clear the wake definitions. Needs an explicit wake commando in input deck
 
 // prepare to copy everyting into the first slice
-  int nsize=beam.size();
+  size_t nsize=beam.size();
   Particle p;
 
   if ((nsize % harmonic) !=0) { return false;}  // check whether the number of slices cannot merged into a smaller number
@@ -273,7 +273,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample)
   double dtheta=4.*asin(1)*slicelength/reflength/static_cast<double>(harmonic);
 
   for (int i=1; i<nsize;i++){
-      for (int k=0; k<beam.at(i).size();k++){
+      for (size_t k=0; k<beam.at(i).size();k++){
 	p.gamma=beam[i].at(k).gamma;
 	p.theta=beam[i].at(k).theta+i*dtheta;
 	p.x    =beam[i].at(k).x;
@@ -289,7 +289,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample)
   eloss.resize(nsize/harmonic);
   longESC.resize(nsize/harmonic);
   // updating the sorting algorithm
-  int isz=beam.size();
+  size_t isz=beam.size();
   double sl=4*asin(1.)*slicelength/reflength;
   sorting.configure(0,sl,0,sl*isz,0,sl*isz,false); 
 

@@ -66,7 +66,7 @@ bool ImportField::init(int rank, int size, map<string,string> *arg, vector<Field
 
   int idx=-1;
   Field *field;
-  for (int i=0; i<fieldin->size();i++){
+  for (size_t i=0; i<fieldin->size();i++){
     if (fieldin->at(i)->harm==harm){
       field=fieldin->at(i);
       idx=i;
@@ -92,7 +92,7 @@ bool ImportField::init(int rank, int size, map<string,string> *arg, vector<Field
 
  
 
-  for (int j=0; j<time->getNodeNSlice(); j++){
+  for (size_t j=0; j<time->getNodeNSlice(); j++){
     int i=j+time->getNodeOffset();
     double sloc=s[i];
     import.readSlice(s[i],&field->field[j]);

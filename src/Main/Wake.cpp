@@ -92,7 +92,7 @@ bool Wake::init(int rank, int size, map<string,string> *arg,  Time *time, Setup 
   wakerou = new double [ns];
   wakeext = new double [nsNode];
 
-  for (int j=0; j<nsNode; j++){
+  for (size_t j=0; j<nsNode; j++){
     int i=j+time->getNodeOffset();
     wakeext[j]=prof->value(s[i],loss,lossref);  // external wake
   }
@@ -130,11 +130,11 @@ bool Wake::init(int rank, int size, map<string,string> *arg,  Time *time, Setup 
 
 void Wake::KernelRoughness(vector< complex<double> > *K, complex<double> q1, complex<double> q2)
 {
-  int N=K->size();
+  size_t N=K->size();
   complex<double> dq=(q2-q1)/static_cast<double>(N-1);
   complex<double> i=complex<double> (0,1);
 
-  for (int j=0; j< N;j++){
+  for (size_t j=0; j< N;j++){
     complex<double> q=q1+static_cast<double>(j)*dq;
     complex<double> S=(sqrt(2.*q+1.)-i*sqrt(2.*q-1.))*q/sqrt(4.*q*q-1.);
     K->at(j)=(S+1.)/(1.-i*rrough*q*S)/(1.+i*rrough*q);
@@ -147,12 +147,12 @@ void Wake::KernelRoughness(vector< complex<double> > *K, complex<double> q1, com
 
 double Wake::TrapIntegrateRoughness(vector< complex<double> > *K, complex<double> q1, complex<double> q2, double tau)
 {
-  int N=K->size();
+  size_t N=K->size();
   complex<double> dq=(q2-q1)/static_cast<double>(N-1);
   complex<double> i=complex<double> (0,1);  
   complex<double> val=0;
 
-  for (int j=0; j< N;j++){
+  for (size_t j=0; j< N;j++){
     complex<double> q=q1+static_cast<double>(j)*dq;
     val+=exp(-i*q*tau)*K->at(j);
   }
@@ -168,7 +168,7 @@ void Wake::singleWakeRoughness(int rank)
 {
 
   if (hrough <=0){
-    for (int i=0; i< ns; i++){
+    for (size_t i=0; i< ns; i++){
       wakerou[i]=0;
     }
     return;
@@ -202,7 +202,7 @@ void Wake::singleWakeRoughness(int rank)
   double res;
   double coef=rrough/pi*4/radius/radius*1.6e-19/4/pi/8.854e-12;   
 
-  for (int i=0; i<ns; i++){
+  for (size_t i=0; i<ns; i++){
     tau=2*pi*ds*i/lrough;
     res =this->TrapIntegrateRoughness(&K1,q1,q2,tau);
     res+=this->TrapIntegrateRoughness(&K2,q2,q3,tau);
@@ -223,7 +223,7 @@ void Wake::singleWakeGeometric(int rank)
 {
 
 
-  for (int i=0; i< ns; i++){
+  for (size_t i=0; i< ns; i++){
       wakegeo[i]=0;
   }
 
@@ -234,7 +234,7 @@ void Wake::singleWakeGeometric(int rank)
   double pi=2.*asin(1.);
   double coef=-vacimp*ce/(pi*pi*radius*lgap)*2*sqrt(0.5*gap); // scaling coefficient
   if (!roundpipe) { coef*=0.956; }     //
-  for (int i = 0;i<ns;i++){
+  for (size_t i=0;i<ns;i++){
     wakegeo[i]=coef*sqrt(ds*i);     
   }
    
@@ -251,7 +251,7 @@ void Wake::singleWakeGeometric(int rank)
 void Wake::singleWakeResistive(int rank)
 {
 
-   for (int i=0; i< ns; i++){
+   for (size_t i=0; i< ns; i++){
       wakeres[i]=0;
    }
 
@@ -271,7 +271,7 @@ void Wake::singleWakeResistive(int rank)
 
    double Zre[1000],Zim[1000]; 
    if (roundpipe) {
-     for (int i =0; i<nk; i++){
+     for (size_t i=0; i<nk; i++){
         double kappa=(i+1.)*kappamax/nk;  // value of kappa	 
  	double t = kappa/sqrt(1+kappa*kappa*gamma*gamma);
         double lambdaRe=coef*sqrt(t)*sqrt(1.-t*gamma);
@@ -291,7 +291,7 @@ void Wake::singleWakeResistive(int rank)
       coh[0]=1.;
       sih[0]=1.;
         
-      for (int i =0; i<nk; i++){       
+      for (size_t i=0; i<nk; i++){       
            double kappa=(i+1.)*kappamax/nk;  // value of kappa	 
  	   double t = kappa/sqrt(1+kappa*kappa*gamma*gamma);
            double scale=2.*15.*kappa/(299792458.0*radius*s0*(2*nq-1));
@@ -311,9 +311,9 @@ void Wake::singleWakeResistive(int rank)
  
    // reconstructing the wakepotential
    coef=ds*kappamax/nk/s0;
-   for (int i=0;i<ns;i++){
+   for (size_t i=0;i<ns;i++){
       wakeres[i]=0;
-      for (int j=0;j<nk;j++){
+      for (size_t j=0;j<nk;j++){
 	  double phi=i*coef*(1.e0+j);
 	  wakeres[i]+=Zre[j]*cos(phi)+Zim[j]*sin(phi);
       }
@@ -321,7 +321,7 @@ void Wake::singleWakeResistive(int rank)
    coef=-kappamax/nk/s0*299792458.0/pi*(vacimp*ce/4/pi); // to scale to SI units
    coef*=0.5;  // emperical adjustment of amplitude, needs checking!!!!!
 
-   for (int i = 0; i < ns; i++){
+   for (size_t i=0; i < ns; i++){
      wakeres[i]*=coef;
    }
 

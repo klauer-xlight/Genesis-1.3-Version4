@@ -146,7 +146,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     return false;
   }
 
-  int ntotal=getDatasetSize(fid, (char *)dset.c_str());
+  size_t ntotal=getDatasetSize(fid, (char *)dset.c_str());
   double dQ=charge/static_cast<double> (ntotal);
 
   if (rank==0) {cout << "Particles in external distribution: " << ntotal << endl;}
@@ -154,10 +154,10 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
  
   // step 3 - read datasets - this has to be checked that in parallel read the file can be not equivalent to the chunck size....
 
-  int nchunk=ntotal/size;
+  size_t nchunk=ntotal/size;
   if ((ntotal % size) !=0) {nchunk++;}
 
-  int nsize=nchunk;
+  size_t nsize=nchunk;
   if ((rank*nchunk+nsize)>ntotal) { nsize=ntotal-rank*nchunk; }
   
   t.resize(nsize);
@@ -224,7 +224,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
   if (rank==0) { cout << "Analysing external distribution... " << endl;}
 
 
-  for (int i=0; i<nsize; i++){
+  for (size_t i=0; i<nsize; i++){
     t[i]*=-299792458.0;       // convert to positin in meters
     g[i] = sqrt(g[i]*g[i] + 1);         // convert momentum to energy
   }
@@ -247,7 +247,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
 
   double ttotal=tmax-tmin;
 
-  for (int i=0; i<nsize; i++){
+  for (size_t i=0; i<nsize; i++){
     t[i]-=tmin;
   }
 
@@ -271,7 +271,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
 
   if (match) {
     if (rank==0){cout << "Matching external distribution..." << endl; }
-    for (int i=0; i<nsize; i++){
+    for (size_t i=0; i<nsize; i++){
       if (!center){ gamma=-gavg;}
       double ratio=sqrt(gavg/gamma);
       g[i]+=gamma-gavg;  // take out center so that the rematching is correct
@@ -307,7 +307,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     yavg=ycen-yavg;
     pxavg=pxcen-pxavg;
     pyavg=pycen-pyavg;
-    for (int i=0; i<nsize; i++){
+    for (size_t i=0; i<nsize; i++){
       g[i]+=gavg;
       x[i]+=xavg;
       y[i]+=yavg;
@@ -347,7 +347,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
 
   // copying all particles into the dist vector to enable sorting
   Particle part;
-  for (int i=0; i<nsize; i++){
+  for (size_t i=0; i<nsize; i++){
       part.theta=t[i];
       part.gamma=g[i];
       part.x=x[i];
@@ -388,14 +388,14 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
 
     // step 1 - select all particles needed for the reconstruction of a given slice
     double sloc=s[islice+node_off];
-    for (int i=0; i<dist[0].size();i++){
+    for (size_t i=0; i<dist[0].size();i++){
       if ((dist[0].at(i).theta>(sloc-0.5*dslen))&&(dist[0].at(i).theta<(sloc+0.5*dslen))){
 	beam->beam.at(islice).push_back(dist[0].at(i));
       }
     }
    
     // step 2 - calculate the current and number of particles.
-    int ncount = beam->beam.at(islice).size();
+    size_t ncount = beam->beam.at(islice).size();
     int mpart;
     beam->current[islice]=static_cast<double>(ncount)*dQ*299792458.0/dslen;
     if (one4one){
@@ -415,7 +415,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     }
 
     // step 4 - refill particle phase completely new
-    for (int i=0;i<beam->beam.at(islice).size();i++){
+    for (size_t i=0;i<beam->beam.at(islice).size();i++){
       beam->beam.at(islice).at(i).theta=theta0*ran->getElement();  // for one2one this should be the correct shot noise
     }
 
@@ -425,7 +425,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
       for (int i=mpart; i>0; i--){
         int i1=i-1;
         int i2=nbins*i1;
-        for (int j=0;j<nbins;j++){
+        for (size_t j=0;j<nbins;j++){
           beam->beam.at(islice).at(i2+j).gamma=beam->beam.at(islice).at(i1).gamma;
   	  beam->beam.at(islice).at(i2+j).x    =beam->beam.at(islice).at(i1).x;
           beam->beam.at(islice).at(i2+j).y    =beam->beam.at(islice).at(i1).y;
@@ -440,11 +440,11 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
         delete[] work;
         work=new Particle [nwork];
       }
-      for (int i=0;i<mpart*nbins;i++){
+      for (size_t i=0;i<mpart*nbins;i++){
       	work[i].theta=beam->beam.at(islice).at(i).theta;  
       }
       sn.applyShotNoise(work,mpart*nbins,nbins,ne);
-      for (int i=0;i<mpart*nbins;i++){
+      for (size_t i=0;i<mpart*nbins;i++){
       	beam->beam.at(islice).at(i).theta=work[i].theta;  
       }
 
@@ -470,7 +470,7 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
    
 
   // check for error if there are only one or none particle to fill up distribution 
-  int  ndist=beam->size();
+  size_t ndist=beam->size();
   Particle par;
 
   if (ndist==0){
@@ -506,7 +506,7 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
   y2=0;
   px2=0;
   py2=0;
-  for (int i=0; i<ndist; i++){
+  for (size_t i=0; i<ndist; i++){
     g1 +=beam->at(i).gamma;
     g2 +=beam->at(i).gamma * beam->at(i).gamma;
     x1 +=beam->at(i).x;
@@ -539,7 +539,7 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
   if (py2==0) { py2=1; } else { py2=1/py2; }
 
   // step 3 - normalize distribution so that it is aligned to the origin and has an rms size of unity in all dimensions
-  for (int i=0; i<ndist; i++){
+  for (size_t i=0; i<ndist; i++){
     beam->at(i).gamma=(beam->at(i).gamma - g1)*g2;
     beam->at(i).x    =(beam->at(i).x     - x1)*x2;
     beam->at(i).y    =(beam->at(i).y     - y1)*y2;
@@ -553,7 +553,7 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
     int n1=static_cast<int>(floor(static_cast<double>(ndist0)*ran->getElement()));
     double rmin=1e9;
     int n2=n1;
-    for (int i=0; i<ndist0;i++){
+    for (size_t i=0; i<ndist0;i++){
        double r=this->distance(beam->at(n1),beam->at(i)); 
        if ((r<rmin) && ( i!=n1 )) {
            n2=i;
@@ -572,7 +572,7 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
 
   // step 5 - scale back
 
-  for (int i=0; i<beam->size(); i++){
+  for (size_t i=0; i<beam->size(); i++){
     beam->at(i).gamma=beam->at(i).gamma/g2 + g1;
     beam->at(i).x    =beam->at(i).x/x2 + x1;
     beam->at(i).y    =beam->at(i).y/y2 + y1;
@@ -603,7 +603,7 @@ double  SDDSBeam::distance(Particle p1, Particle p2){
 
 void SDDSBeam::removeParticles(vector<Particle> *beam,int mpart)
 {
-  int ndist=beam->size();
+  size_t ndist=beam->size();
   while(ndist>mpart){
     int idx=static_cast<int>(floor(static_cast<double>(ndist)*ran->getElement()));
     beam->at(idx)=beam->at(ndist-1);
@@ -629,7 +629,7 @@ void SDDSBeam::analyse(double ttotal,int nsize)
   
   //  cout << "Rank: " << rank << " Size: " << nsize << endl;
 
-  for (int i=0; i <nsize;i++){
+  for (size_t i=0; i <nsize;i++){
     if ((t[i]>mt0)&&(t[i]<mt1)){
       ncount++;
       a1+=x[i];

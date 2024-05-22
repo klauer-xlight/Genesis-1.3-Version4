@@ -178,7 +178,7 @@ void Output::writeGlobal(Undulator *und, double gamma, double lambda, double sam
   this->writeSingleNode(gid,"scan"," ",&tmp);
 
   tmp.resize(ntotal);
-  for (int i=0; i<ntotal; i++){
+  for (size_t i=0; i<ntotal; i++){
     tmp[i]=static_cast<double>(i)*sample*lambda;
   }
   this->writeSingleNode(gid,"s","m",&tmp);
@@ -189,7 +189,7 @@ void Output::writeGlobal(Undulator *und, double gamma, double lambda, double sam
       df=0;
   }
   e0 = e0-0.5*df*ntotal;
-  for (int i=0; i<ntotal; i++){
+  for (size_t i=0; i<ntotal; i++){
     tmp[i]=e0+static_cast<double>(i)*df;
   }
   this->writeSingleNode(gid,"frequency","eV",&tmp);
@@ -376,9 +376,9 @@ void Output::writeBeamBuffer(Beam *beam)
   int bh=beam->getBunchingHarmonics();
   char bgroup[20];
   for (int i=1; i<bh;i++){
-    sprintf(bgroup,"bunching%d",(i+1));
+    snprintf(bgroup, sizeof(bgroup), "bunching%d",(i+1));
     this->writeBuffer(gid, bgroup, " ",  &beam->bh[i-1]);
-    sprintf(bgroup,"bunchingphase%d",(i+1));
+    snprintf(bgroup, sizeof(bgroup), "bunchingphase%d",(i+1));
     this->writeBuffer(gid, bgroup,"rad",  &beam->ph[i-1]);
     }
 
@@ -416,9 +416,9 @@ void Output::writeFieldBuffer(Field *field)
 
   int harm=field->harm;
   if (harm==1){
-     sprintf(name,"Field");
+     snprintf(name, sizeof(name), "Field");
   } else {
-     sprintf(name,"Field%d",harm);
+     snprintf(name, sizeof(name), "Field%d",harm);
   }
   gid=H5Gcreate(fid,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 

@@ -199,7 +199,7 @@ void Control::applySlippage(double slippage, Field *field)
       int tag=1;
    
       // get slice which is transmitted
-      int last=(field->first+field->field.size()-1)  %  field->field.size();
+      size_t last=(field->first+field->field.size()-1)  %  field->field.size();
       // get first slice for inverse direction
       if (direction<0){
 	last=(last+1) % field->field.size();  //  this actually first because it is sent backwards
@@ -221,14 +221,14 @@ void Control::applySlippage(double slippage, Field *field)
 	
       if (size>1){
         if ( (rank % 2)==0 ){                   // even nodes are sending first and then receiving field
-           for (int i=0; i<ncells; i++){
+           for (size_t i=0; i<ncells; i++){
 	     work[2*i]  =field->field[last].at(i).real();
 	     work[2*i+1]=field->field[last].at(i).imag();
 	   }
 	   MPI_Send(work,2*ncells, /* <= number of DOUBLES */
                MPI_DOUBLE,rank_next,tag,MPI_COMM_WORLD);
 	   MPI_Recv(work,2*ncells, MPI_DOUBLE,rank_prev,tag,MPI_COMM_WORLD,&status);
-	   for (int i=0; i<ncells; i++){
+	   for (size_t i=0; i<ncells; i++){
 	     complex <double> ctemp=complex<double> (work[2*i],work[2*i+1]);
 	     field->field[last].at(i)=ctemp;
 	   }
@@ -237,7 +237,7 @@ void Control::applySlippage(double slippage, Field *field)
 	  MPI_Recv(work,2*ncells, /* <= number of DOUBLES */
               MPI_DOUBLE,rank_prev,tag,MPI_COMM_WORLD,&status);
 
-	  for (int i=0; i<ncells; i++){
+	  for (size_t i=0; i<ncells; i++){
 	    complex <double> ctemp=complex<double> (work[2*i],work[2*i+1]);
 	    work[2*i]  =field->field[last].at(i).real();
 	    work[2*i+1]=field->field[last].at(i).imag();
@@ -249,13 +249,13 @@ void Control::applySlippage(double slippage, Field *field)
 
       // first node has empty field slipped into the time window
       if ((rank==0) && (direction >0)){
-        for (int i=0; i<ncells; i++){
+        for (size_t i=0; i<ncells; i++){
 	  field->field[last].at(i)=complex<double> (0,0);
         }
       }
 
       if ((rank==(size-1)) && (direction <0)){
-        for (int i=0; i<ncells; i++){
+        for (size_t i=0; i<ncells; i++){
 	  field->field[last].at(i)=complex<double> (0,0);
         }
       }

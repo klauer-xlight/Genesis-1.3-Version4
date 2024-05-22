@@ -116,15 +116,15 @@ bool ReadFieldHDF5::readSlice(double s, vector<complex<double> >*field){
   char name[30];
 
 
-  sprintf(name,"slice%6.6d/field-real",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/field-real", islice);
   readDataDouble(fid,name,work,nwork);
-  for (int i=0;i<nwork;i++){
+  for (size_t i=0;i<nwork;i++){
     field->at(i)=scl*work[i];
   }
 
-  sprintf(name,"slice%6.6d/field-imag",islice);
+  snprintf(name, sizeof(name), "slice%6.6d/field-imag", islice);
   readDataDouble(fid,name,work,nwork);
-  for (int i=0;i<nwork;i++){
+  for (size_t i=0;i<nwork;i++){
     field->at(i)+=complex<double>(0,scl*work[i]);
   }
 

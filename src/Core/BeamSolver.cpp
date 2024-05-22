@@ -20,7 +20,7 @@ void BeamSolver::advance(double delz, Beam *beam, vector< Field *> *field, Undul
     rharm.clear();
     xks = 1;  // default value in the case that no field is defined
 
-    for (int i = 0; i < field->size(); i++) {
+    for (size_t i=0; i < field->size(); i++) {
         int harm = field->at(i)->getHarm();
         if ((harm == 1) || !onlyFundamental) {
             xks = field->at(i)->xks / static_cast<double>(harm);    // fundamental field wavenumber used in ODE below
@@ -146,7 +146,7 @@ void BeamSolver::ODE(double tgam,double tthet) {
     // differential equation for longitudinal motion
     double ztemp1 = -2. / xks;
     complex<double> ctmp = 0;
-    for (int i = 0; i < rpart.size(); i++) {
+    for (size_t i=0; i < rpart.size(); i++) {
         ctmp += rpart[i] * complex<double>(cos(rharm[i] * tthet), -sin(rharm[i] * tthet));
     }
     double btper0 = btpar + ztemp1 * ctmp.real();   //perpendicular velocity

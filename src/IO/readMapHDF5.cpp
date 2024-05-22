@@ -86,8 +86,8 @@ bool ReadMapHDF5::readDataset(const std::string& dset, std::vector<double> &data
         std::cout << "Dataset: " << dset <<  " size: " << nsize << " shape: " << shape[0] << " " << shape[1] << " " << shape[2] << endl;
         int idx = 0;
         int jmax = nsize/6;
-        for (int i = 0; i < jmax; i++){
-            for (int j=0;j<6;j++){
+        for (size_t i=0; i < jmax; i++){
+            for (size_t j=0;j<6;j++){
                 std::cout << " " << data.at(idx++);
             }
             std::cout << std::endl;

@@ -99,7 +99,7 @@ bool LoadField::init(int rank, int size, map<string,string> *arg, vector<Field *
   // check for existing field record;
   int idx=-1;
   Field *field;
-  for (int i=0; i<fieldin->size();i++){
+  for (size_t i=0; i<fieldin->size();i++){
     if (fieldin->at(i)->harm==harm){
       field=fieldin->at(i);
       idx=i;
@@ -141,7 +141,7 @@ bool LoadField::init(int rank, int size, map<string,string> *arg, vector<Field *
   FieldSlice slice;
   GaussHermite gh;
 
-  for (int j=0; j<time->getNodeNSlice(); j++){
+  for (size_t j=0; j<time->getNodeNSlice(); j++){
     int i=j+time->getNodeOffset();
     slice.lambda=prof->value(s[i],lambda,lambdaref);
     slice.power=prof->value(s[i],power,powerref);
@@ -157,11 +157,11 @@ bool LoadField::init(int rank, int size, map<string,string> *arg, vector<Field *
     slice.harm=harm;
     gh.loadGauss(fieldslice,&slice,dgrid,ngrid);
     if (add){
-      for (int k=0; k<ngrid*ngrid;k++){
+      for (size_t k=0; k<ngrid*ngrid;k++){
         fieldin->at(idx)->field[j].at(k)+=fieldslice[k];
       } 
     } else {
-      for (int k=0; k<ngrid*ngrid;k++){
+      for (size_t k=0; k<ngrid*ngrid;k++){
         fieldin->at(idx)->field[j].at(k)=fieldslice[k]; 
       }      
     }

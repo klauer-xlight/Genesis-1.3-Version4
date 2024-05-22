@@ -66,7 +66,7 @@ bool Parser::parse(string *element, map<string,string> *argument)
 	return false;
       }
       accumulate=true;
-      for (int i=0; i<instring.size();i++){
+      for (size_t i=0; i<instring.size();i++){
 	instring[i]=tolower(instring[i]);
       }
       *element=instring;   

@@ -47,7 +47,7 @@ std::map<std::string,OutputInfo> DiagBeamUser::getTags(FilterDiagnostics & filte
 
 void DiagBeamUser::getValues(Beam *beam, std::map<std::string,std::vector<double> >&val, int iz) {
 
-    int ns = beam->beam.size();   // the number of slices per node
+    size_t ns = beam->beam.size();   // the number of slices per node
     int is = 0;    // counter for the current slice
     double g_norm = 0;   // global variable for normalizing the other global variables (here the current)
     double g_loss = 0;   // global variable for beam loss
@@ -140,7 +140,7 @@ std::map<std::string,OutputInfo> DiagFieldUser::getTags(FilterDiagnostics & filt
 void DiagFieldUser::getValues(Field *field, std::map<std::string,std::vector<double> >&val, int iz){
 
     // some basic variables useful for any calculation
-    int ns = field->field.size();
+    size_t ns = field->field.size();
     int is0 = 0;
     int ngrid = field->ngrid;
     double ks=4.*asin(1)/field->xlambda;

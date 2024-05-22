@@ -83,13 +83,13 @@ void Collective::initWake(unsigned int ns_in, unsigned int nsNode, double ds_in,
   dcurrent= new double[ns];
 
   // fill the wakes or single particle wakes
-  for (int i=0; i <nsNode; i++){
+  for (size_t i=0; i <nsNode; i++){
     wakeext[i]=wakeext_in[i];
     wakeint[i]=0;
   }
 
 
-  for (int i=0; i <ns; i++){
+  for (size_t i=0; i <ns; i++){
     wakegeo[i]=wakegeo_in[i];
     wakeres[i]=wakeres_in[i];
     wakerou[i]=wakerou_in[i];

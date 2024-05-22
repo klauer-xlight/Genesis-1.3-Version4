@@ -49,14 +49,14 @@ class Field{
    bool outputSpatial();
    bool outputIntensity();
    bool dumpFieldEnabled();
-   int getHarm();
+   size_t getHarm();
    double getRHarm();
 
 
    vector< vector< complex<double> > > field;
    double xlambda,dgrid,xks,gridmax,dz_save;
-   int ngrid, first;  // first points to first slice due to slippage
-   int harm;
+   size_t ngrid, first;  // first points to first slice due to slippage
+   size_t harm;
    bool polarization;
    double slicelength,s0;
    double accuslip;
@@ -124,7 +124,7 @@ inline double Field::getRHarm()
   return rharm;
 }
 
-inline int Field::getHarm()
+inline size_t Field::getHarm()
 {
   return harm;
 }

@@ -187,7 +187,7 @@ void HDF5Base::writeBufferULL(hid_t gid, string dataset, string unit, vector<uns
 void HDF5Base::writeSingleNode(hid_t gid, string dataset,string unit, vector<double> *data){
 
 
-  int nd = data->size();
+  size_t nd = data->size();
 
   hsize_t fblock[1]={static_cast<hsize_t>(nd)};
   hid_t filespace=H5Screate_simple(1,fblock,NULL);
@@ -227,7 +227,7 @@ void HDF5Base::writeSingleNode(hid_t gid, string dataset,string unit, vector<dou
 void HDF5Base::writeSingleNodeInt(hid_t gid, string dataset,vector<int> *data){
 
 
-  int nd = data->size();
+  size_t nd = data->size();
 
   hsize_t fblock[1]={static_cast<hsize_t>(nd)};
   hid_t filespace=H5Screate_simple(1,fblock,NULL);
@@ -256,7 +256,7 @@ void HDF5Base::writeSingleNodeString(hid_t gid, string dataset, string *data){
 
 
  
-  int nd = data->size();
+  size_t nd = data->size();
 
   hsize_t fblock[1]={1};
   hid_t filespace=H5Screate_simple(1,fblock,NULL);
@@ -387,7 +387,7 @@ void HDF5Base::readDataInt(hid_t fid, char *name, int *data, int size)
 bool HDF5Base::getFullDatasetSize(hid_t fid, const char *name, std::vector<int> &shape)
 {
     hsize_t dims[3],maxdims[3];
-    for (int i = 0 ; i < 3; i++){
+    for (size_t i=0 ; i < 3; i++){
         dims[i]=0;
         maxdims[i]=0;
     }
@@ -402,7 +402,7 @@ bool HDF5Base::getFullDatasetSize(hid_t fid, const char *name, std::vector<int> 
     H5Dclose(dsid);
 
     shape.resize(3);
-    for (int i = 0 ; i < 3 ; i++){
+    for (size_t i=0 ; i < 3 ; i++){
         shape.at(i) = static_cast<int>(dims[i]);
     }
     return true;
@@ -455,7 +455,7 @@ bool HDF5Base::browseFile(const string &path,vector<string> *names){
   herr_t idx=H5Literate(fid,H5_INDEX_NAME,H5_ITER_NATIVE,NULL, file_info, reinterpret_cast<void *> (names));
   H5Fclose(fid);
 
-  for (int i=0; i < names->size(); i++){ 
+  for (size_t i=0; i < names->size(); i++){ 
     if (names->at(i).compare(group) == 0) {
       names->erase(names->begin()+i);
       return true;

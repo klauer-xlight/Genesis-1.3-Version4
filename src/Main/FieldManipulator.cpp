@@ -92,7 +92,7 @@ bool FieldManipulator::init(int rank, int size, map<string,string> *arg, vector<
 	// identify the harmonic field to be manipulated
 	// (and stop if there is no field for requested harmonic)
 	Field *p_fld=NULL;
-	for (int k=0; k<fieldin->size(); k++) {
+	for (size_t k=0; k<fieldin->size(); k++) {
 		if(fieldin->at(k)->harm == harm) {
 			p_fld = fieldin->at(k);
 			break;

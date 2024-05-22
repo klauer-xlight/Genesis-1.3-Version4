@@ -88,14 +88,14 @@ void Sorting::localSort(vector <vector <Particle> > * recdat)  // most arguments
   vector<int> count,count2;
   count.resize(recdat->size());
   count2.resize(recdat->size());
-  for  (int i=0; i< count.size(); i++){ 
+  for  (size_t i=0; i< count.size(); i++){ 
      count[i]=0;
      count2[i]=0;
   }
 
 
-  for (int a=0;a<recdat->size();a++){  //Run over the slices 
-    int b=0;
+  for (size_t a=0;a<recdat->size();a++){  //Run over the slices 
+    size_t b=0;
     while ( b < recdat->at(a).size()){
       double theta=recdat->at(a).at(b).theta;
       int atar=static_cast<int>(floor(theta*invslen));   // relative target slice. atar = 0 -> stays in same slice
@@ -143,7 +143,7 @@ void Sorting::localSort(vector <vector <Particle> > * recdat)  // most arguments
 
 
 
-  //  for (int i=0; i<count.size(); i++){
+  //  for (size_t i=0; i<count.size(); i++){
   //  cout<<"Rank: " << rank << " Slice: " << i << " received: " << count[i] << " send: "<<count2[i]<<endl;
   //} 
    
@@ -324,9 +324,9 @@ void Sorting::recv(int source, vector <vector <Particle> > *rec ,vector<double> 
  
 
    //Determines whether the data needs to be pushed forward or backwards or stored in the correct slices
-   int np=rec->size();                      // number of slices
+   size_t np=rec->size();                      // number of slices
    if (source>rank) {                       // data are coming from higher node -> particles are pushed backward
-     for (int a=0;a<ndata;a+=6) {
+     for (size_t a=0;a<ndata;a+=6) {
        double s = s0+slen*(np-1)+data[a];  // get the actual positionassume that backward the particles are placed in the last slice !
        if (s<sendmin){
          olddata->push_back(data[a]+shift*np);  // if the particle isstillpushed through than it phase is adjusted by slen*slicenumber
@@ -346,7 +346,7 @@ void Sorting::recv(int source, vector <vector <Particle> > *rec ,vector<double> 
        }
      }
    } else {    // particles are coming from a lower node -> particles are pushed forward
-     for (int a=0;a<ndata;a+=6) {
+     for (size_t a=0;a<ndata;a+=6) {
        double s = s0+data[a];  // get the actual position assume that forward the particles are placed in the first slice !
        if (s>sendmax){
 	 olddata->push_back(data[a]-shift*np);
@@ -382,14 +382,14 @@ void Sorting::fillPushVectors(vector< vector <Particle> >*rec)
   pushforward.clear();
   pushbackward.clear();
   
-  int nsize=rec->size();
+  size_t nsize=rec->size();
   double shift=slen;  // flag to indicate correction in position because each slice has its own position ( 3pi in slice 5 is pi in slice 6}
   if (globalframe) {shift = 0;} // don't change position if it is a global frame (e.g. when importing elegant distibution)
   
   int count = 0;
 
-  for (int i = 0; i < nsize; i++){  // loop over slices
-    for (int j = 0; j < rec->at(i).size(); j++){ // loop over particles in slice
+  for (size_t i=0; i < nsize; i++){  // loop over slices
+    for (size_t j=0; j < rec->at(i).size(); j++){ // loop over particles in slice
       double s = s0+slen*i+rec->at(i).at(j).theta;  // get the actual position
       if (s<sendmin){
 	pushbackward.push_back(rec->at(i).at(j).theta+(i+1)*shift); 
@@ -414,7 +414,7 @@ void Sorting::fillPushVectors(vector< vector <Particle> >*rec)
       }
     }
 
-    int j=0;
+    size_t j=0;
 
     while (j<rec->at(i).size()){
         double s = s0+slen*i+rec->at(i).at(j).theta;  // get the actual position
@@ -452,8 +452,8 @@ int Sorting::centerShift(vector <vector <Particle> > * recdat)
 
   // calculate on the node the amount of total transferred particles
 
-  for (int a=0;a<recdat->size();a++){  //Run over the slices 
-    for (int b=0;b<recdat->at(a).size();b++) {  //Loop over the partiles in the slice
+  for (size_t a=0;a<recdat->size();a++){  //Run over the slices 
+    for (size_t b=0;b<recdat->at(a).size();b++) {  //Loop over the partiles in the slice
       part+=1.0;
       shift+=floor(recdat->at(a).at(b).theta*invslen);   // relative target slice. = 0 -> stays in same slice
     }
@@ -473,8 +473,8 @@ int Sorting::centerShift(vector <vector <Particle> > * recdat)
 
   int nshift=-static_cast<int>(round(tshift/tpart));  // instead of moving more than half the particles forward, it is easier to move the field backwards. Also theta needs to be corrected
 
-  for (int a=0;a<recdat->size();a++){  //Run over the slices 
-    for (int b=0;b<recdat->at(a).size();b++) {  //Loop over the partiles in the slice
+  for (size_t a=0;a<recdat->size();a++){  //Run over the slices 
+    for (size_t b=0;b<recdat->at(a).size();b++) {  //Loop over the partiles in the slice
       recdat->at(a).at(b).theta+=static_cast<double>(nshift)*slen;   // adjust theta position because the field is moved instead of particles
     }
   }

@@ -8,7 +8,7 @@ Lattice::Lattice()
 
 Lattice::~Lattice()
 {
-  for (int i=0;i<lat.size();i++){
+  for (size_t i=0;i<lat.size();i++){
     delete lat[i];
   }
   lat.clear();
@@ -20,7 +20,7 @@ bool Lattice::parse(string filename, string beamline, int rank, SeriesManager *s
 
   // release old lattice
 
-  for (int i=0;i<lat.size();i++){
+  for (size_t i=0;i<lat.size();i++){
     delete lat[i];
   }
   lat.clear();
@@ -36,7 +36,7 @@ bool Lattice::parse(string filename, string beamline, int rank, SeriesManager *s
   
   layout.clear();  // layout holds start and end point of each value
   
-  for(int i=0; i<lat.size();i++){
+  for(size_t i=0; i<lat.size();i++){
     double z0=lat[i]->z;    
     layout[z0]=1;
     layout[z0+lat[i]->l]=1;
@@ -60,7 +60,7 @@ bool Lattice::generateLattice(Setup *setup, AlterLattice *alt, Undulator *und)
 
   und->setGammaRef(gamma);
 
-  int ndata=lat_aw.size();
+  size_t ndata=lat_aw.size();
 
   und->aw.resize(ndata);
   und->ax.resize(ndata);
@@ -86,7 +86,7 @@ bool Lattice::generateLattice(Setup *setup, AlterLattice *alt, Undulator *und)
   und->helical.resize(ndata);
   und->marker.resize(ndata+1);
 
-  for (int i=0; i<ndata;i++){
+  for (size_t i=0; i<ndata;i++){
       und->aw[i]=lat_aw[i];
       und->ax[i]=lat_ax[i];
       und->ay[i]=lat_ay[i];
@@ -151,7 +151,7 @@ bool Lattice::generateLattice(Setup *setup, AlterLattice *alt, Undulator *und)
 void Lattice::calcSlippage(double lambda, double gamma)
 {
 
-  int nz=lat_aw.size();
+  size_t nz=lat_aw.size();
   lat_slip.resize(nz);                                  // this needs to be improved for chicanes
   lat_phase.resize(nz);
   
@@ -160,7 +160,7 @@ void Lattice::calcSlippage(double lambda, double gamma)
   double Lz=0;    // projected path
   double tmp;
 
-  for (int i=0; i< nz;i++){
+  for (size_t i=0; i< nz;i++){
     if (lat_aw[i]>0){ // within undulator
       tmp=2*gamma*gamma*lambda/(1+lat_aw[i]*lat_aw[i]);
       lat_slip[i]=lat_dz[i]/tmp;
@@ -199,7 +199,7 @@ void Lattice::calcSlippage(double lambda, double gamma)
 int Lattice::findElement(double z0, double z1,string type)
 {
   double zmid=0.5*(z0+z1);
-  for(int i=0;i<lat.size();i++){
+  for(size_t i=0;i<lat.size();i++){
     double zz0 =lat[i]->z;
     double zz1 =zz0+lat[i]->l;
     if ((zmid>zz0)&&(zmid<zz1)&&(lat[i]->type.compare(type)==0)){
@@ -212,7 +212,7 @@ int Lattice::findElement(double z0, double z1,string type)
 int Lattice::findMarker(double z0,string type)
 {
 
-  for(int i=0;i<lat.size();i++){
+  for(size_t i=0;i<lat.size();i++){
     double zz0 =lat[i]->z-z0;
     if ((zz0*zz0<1e-6) && (lat[i]->type.compare(type)==0)){  
       return i;
@@ -247,7 +247,7 @@ void Lattice::match(int rank, double z0, double gammaref)
   Optics opt;
   opt.init();
 
-  int i=0;
+  size_t i=0;
 
   while((lat_z[i]<z0)&&(i<lat_z.size())){
 
@@ -336,10 +336,10 @@ void Lattice::unrollLattice(double delz)
 
       } else {
         ID *und=(ID *)lat[iele];
-        int nz=round(dz/delz);
+        size_t nz=round(dz/delz);
         if (nz==0) {nz=1;}
         dz=dz/static_cast<double>(nz);
-        for (int iz=0;iz<nz;iz++){
+        for (size_t iz=0;iz<nz;iz++){
 	  lat_dz.push_back(dz);
           lat_aw.push_back(und->aw);
 	  double ku=4.*asin(1)/und->lambdau;
@@ -355,10 +355,10 @@ void Lattice::unrollLattice(double delz)
       }
   }
 
-  int nz=lat_aw.size();
+  size_t nz=lat_aw.size();
   lat_z.resize(nz);
   lat_z[0]=0; 
-  for (int i=1; i<nz;i++){
+  for (size_t i=1; i<nz;i++){
     lat_z[i]=(lat_z[i-1]+lat_dz[i-1]);
   }   
 
@@ -374,7 +374,7 @@ void Lattice::unrollLattice(double delz)
   lat_cy.resize(nz);
   lat_mk.resize(nz);
   lat_ps.resize(nz);
-  for (int i=0; i<nz;i++){
+  for (size_t i=0; i<nz;i++){
     lat_qf[i]=0;
     lat_qx[i]=0;
     lat_qy[i]=0;
@@ -391,7 +391,7 @@ void Lattice::unrollLattice(double delz)
 
   /* now, all other lattice elements */
   int lastChicane=-1;
-  for (int i=0;i<nz;i++){
+  for (size_t i=0;i<nz;i++){
     double z0=lat_z[i];
     double z1=z0+lat_dz[i];
 
@@ -448,21 +448,21 @@ void Lattice::unrollLattice(double delz)
   return;  
 }
 
-bool Lattice::alterElement(string element, string field, double value, string valueref, SeriesManager *seq, int instance, bool add)
+bool Lattice::alterElement(string element, string field, double value, string valueref, SeriesManager *seq, size_t instance, bool add)
 {
 
   double wei = 0;
   if (add) { wei=1; }
   string tag=element.substr(0,4);
-  for (int j=0; j < 4; j++) { tag[j]=tolower(tag[j]); }
-  for (int j=0; j < field.size(); j++) { field[j]=tolower(field[j]); }
+  for (size_t j=0; j < 4; j++) { tag[j]=tolower(tag[j]); }
+  for (size_t j=0; j < field.size(); j++) { field[j]=tolower(field[j]); }
 
-  int count=0;
+  size_t count=0;
 
-  for (int i=0; i < lat.size(); i++){
+  for (size_t i=0; i < lat.size(); i++){
 
     string ele=lat[i]->type.substr(0,4);
-    for (int j=0; j < 4; j++) { ele[j]=tolower(ele[j]); }
+    for (size_t j=0; j < 4; j++) { ele[j]=tolower(ele[j]); }
 
     if (!ele.compare(tag)){
       count++;
@@ -511,11 +511,11 @@ bool Lattice::alterElement(string element, string field, double value, string va
 void Lattice::report(string fn_report)
 {
   ofstream fo;
-  int nz=lat_aw.size();
+  size_t nz=lat_aw.size();
 
   fo.open(fn_report.c_str());
   fo << "i,lat_z,lat_aw,lat_qf,lat_mk,lat_mk_decoded" << endl;
-  for (int i=0;i<nz;i++)
+  for (size_t i=0;i<nz;i++)
   {
     int m  = lat_mk[i];
     string s;

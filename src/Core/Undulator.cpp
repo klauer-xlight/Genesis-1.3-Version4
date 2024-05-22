@@ -40,7 +40,7 @@ void Undulator::updateMarker(int nfld, int npar, int nsort, double zstop_in)
         zfrac = zstop / z[nstepz - 1];
     }
 
-    for (int i=0; i<marker.size();i++) {
+    for (size_t i=0; i<marker.size();i++) {
       if (nfld > 0) {  // field dump
           if ((i % nfld) == 0) {
               marker.at(i) |= 1;
@@ -57,7 +57,7 @@ void Undulator::updateMarker(int nfld, int npar, int nsort, double zstop_in)
           }
       }
     }
-    for (int i=0; i<z.size();i++) {
+    for (size_t i=0; i<z.size();i++) {
         if (z.at(i) > zstop) {  // stop calculation
             marker.at(i)|=8;
         }
@@ -69,8 +69,8 @@ void Undulator::updateMarker(int nfld, int npar, int nsort, double zstop_in)
 // in the expanded lattice)?
 void Undulator::markUndExits(void)
 {
-  int nz=marker.size();
-  for (int i=0;i<nz;i++)
+  size_t nz=marker.size();
+  for (size_t i=0;i<nz;i++)
   {
     // NOTE: Setting flag for next integration step (the first one with aw==0),
     // as the field is dumped before any other work done for this step
@@ -87,11 +87,11 @@ void Undulator::markUndExits(void)
 void Undulator::reportLattice(string fn_report)
 {
   ofstream fo;
-  int nz=aw.size(); /* aw is one element shorter than marker (as of git commit 1a9d191), see Lattice::generateLattice */
+  size_t nz=aw.size(); /* aw is one element shorter than marker (as of git commit 1a9d191), see Lattice::generateLattice */
 
   fo.open(fn_report.c_str());
   fo << "i,z,aw,qf,marker,marker_decoded" << endl;
-  for (int i=0;i<nz;i++)
+  for (size_t i=0;i<nz;i++)
   {
     int m  = marker[i];
     string decoded;
@@ -177,7 +177,7 @@ bool Undulator::init(hid_t fid)
   // convert delay into bending angle
   
 
-  for (int i=0; i<aw.size(); i++){
+  for (size_t i=0; i<aw.size(); i++){
     if (chic_angle[i]!=0){
        double delay=fabs(chic_angle[i]);
        double tmin=0;

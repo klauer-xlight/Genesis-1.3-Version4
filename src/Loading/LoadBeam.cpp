@@ -166,7 +166,7 @@ bool LoadBeam::init(int rank, int size, map<string,string> *arg, Beam *beam, Set
   sn.init(setup->getSeed(),rank);
 
 
-  for (int j=0; j<time->getNodeNSlice(); j++){
+  for (size_t j=0; j<time->getNodeNSlice(); j++){
     int i=j+time->getNodeOffset();
     slice.current=prof->value(s[i],current,currentref);
     double ne=slice.current*lambda*sample/ce;
@@ -201,7 +201,7 @@ bool LoadBeam::init(int rank, int size, map<string,string> *arg, Beam *beam, Set
 
     beam->beam[j].resize(npartloc);
     beam->current[j]=slice.current;
-    for (int k=0;k<npartloc;k++){
+    for (size_t k=0;k<npartloc;k++){
       beam->beam[j].at(k).gamma=beamslice[k].gamma;
       beam->beam[j].at(k).theta=beamslice[k].theta;
       beam->beam[j].at(k).x    =beamslice[k].x;

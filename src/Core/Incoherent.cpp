@@ -66,7 +66,7 @@ void Incoherent::apply(Beam *beam, Undulator *und, double delz)
   double dg=0;
 
   for (int islice=0;islice< beam->beam.size();islice++){
-    int npart=beam->beam.at(islice).size();
+    size_t npart=beam->beam.at(islice).size();
     for (int ip=0; ip<npart; ip++){
       if ((ip % nbins) == 0){
          dg=-dgamavg+dgamsig*(2*sran->getElement()-1);

@@ -40,7 +40,7 @@ void ShotNoise::applyShotNoise(Particle *beam, int npart, int nbins, double ne)
 
   double nbl=ne/static_cast<double>(mpart);  // number of simulated electrons per beamlet 
 
-  for (int i=0; i< npart; i++){
+  for (size_t i=0; i< npart; i++){
     work[i]=0;
   }
   for (int ih=0; ih< (nbins-1)/2; ih++){
@@ -54,7 +54,7 @@ void ShotNoise::applyShotNoise(Particle *beam, int npart, int nbins, double ne)
     }
   }
   
-  for (int i=0; i< npart; i++){
+  for (size_t i=0; i< npart; i++){
     beam[i].theta+=work[i];
   }
 

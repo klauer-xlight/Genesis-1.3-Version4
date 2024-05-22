@@ -34,7 +34,7 @@ class Lattice{
    void getMatchedOptics(double *, double *, double *, double *);
    void match(int, double, double);
 
-   bool alterElement(string,string, double, string, SeriesManager *,int,bool);
+   bool alterElement(string, string, double, string, SeriesManager *, size_t, bool);
 
    void report(string);
 

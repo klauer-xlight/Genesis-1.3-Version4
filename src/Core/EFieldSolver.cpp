@@ -84,7 +84,7 @@ void EFieldSolver::longRange(Beam *beam, double gamma0, double aw) {
     }
 
     // fill local slices
-    for (int i=0; i<nsize;i++){
+    for (size_t i=0; i<nsize;i++){
         work1[i]=beam->current[i];
         work2[i]=beam->getSize(i);
     }
@@ -97,10 +97,10 @@ void EFieldSolver::longRange(Beam *beam, double gamma0, double aw) {
 
     double scl = beam->slicelength/2./asin(1)/299792458.0/2/8.85e-12;  // convert to units of electron rest mass.
 
-    for (int i=0; i < nsize; i++){
+    for (size_t i=0; i < nsize; i++){
         double EFld = 0;
         auto isplit = nsize*MPIrank+i;
-        for (int j = 0; j < isplit; j++) {
+        for (size_t j=0; j < isplit; j++) {
             double ds = static_cast<double>(j - isplit) * beam->slicelength*gamma;
             double coef = 1 +ds/sqrt(ds*ds+fsize[j]); // ds is negative
             EFld += coef*scl*fcurrent[j]/fsize[j];
@@ -133,7 +133,7 @@ void EFieldSolver::analyseBeam(vector<Particle> *beam){
     xcen = 0;
     ycen = 0;
 
-    for (int i = 0; i < npart; i++) {
+    for (size_t i=0; i < npart; i++) {
         xcen += beam->at(i).x;
         ycen += beam->at(i).y;
     }
@@ -144,7 +144,7 @@ void EFieldSolver::analyseBeam(vector<Particle> *beam){
  //   d
 
     double rbound = 0;
-    for (int i = 0; i < npart; i++) {
+    for (size_t i=0; i < npart; i++) {
         double tx = beam->at(i).x - xcen;
         double ty = beam->at(i).y - ycen;
         double rad2 = tx * tx + ty * ty;
@@ -160,7 +160,7 @@ void EFieldSolver::analyseBeam(vector<Particle> *beam){
 
     dr = rmax/static_cast<double>(ngrid-1);
 
-    for (int i = 0; i < npart; i++) {
+    for (size_t i=0; i < npart; i++) {
         double tx = beam->at(i).x - xcen;
         double ty = beam->at(i).y - ycen;
         double radi = sqrt(tx * tx + ty * ty);
@@ -196,7 +196,7 @@ void EFieldSolver::shortRange(vector<Particle> *beam, double current, double gz2
     if (npart > ez.size()){
         ez.resize(npart);
     }
-    for (int i =0; i < npart; i++){
+    for (size_t i=0; i < npart; i++){
         ez[i] = 0;
     }
     efield[islice] = 0;
@@ -213,7 +213,7 @@ void EFieldSolver::shortRange(vector<Particle> *beam, double current, double gz2
     auto coef = -gz2/ks/ks;      // equivalent to 1/[k^2-(k+ku)^2] from fortran code.
     auto econst = vacimp/eev*current/ks/static_cast<double>(npart);
     for (int m = -nphi; m <=nphi; m++){  // loop over azimutal modes
-        for (int i = 0; i < ngrid; i++){
+        for (size_t i=0; i < ngrid; i++){
             lmid[i] = -ldig[i] - ldig[i+1] - 2.*pi*m*m*rlog[i];
         }
         lmid[ngrid-1] -=2*pi*ngrid;
@@ -221,19 +221,19 @@ void EFieldSolver::shortRange(vector<Particle> *beam, double current, double gz2
         for (int l = 1 ; l <= nz; l++) {   // loop over longitudinal modes
 
             // clear source term
-            for (int i =0; i < ngrid; i++){
+            for (size_t i=0; i < ngrid; i++){
                 csrc[i] = complex<double> (0,0);
             }
 
             // build source term
 
-            for (int i=0; i < npart; i++){
+            for (size_t i=0; i < npart; i++){
                 csrc[idxr[i]] += pow(cwork[i],-m)*complex<double>(cos(l*beam->at(i).theta), -sin(l*beam->at(i).theta));
             }
 
             // finalize Laplace operator and source term
             // note that the entire equation is scaled with gammaz^2/l^2/k^2 -> see Eq. 3.29 - 3.33 of thesis
-            for (int i =0 ; i < ngrid; i++){
+            for (size_t i=0 ; i < ngrid; i++){
                 csrc[i] *= complex<double>(0,econst/l/vol[i]);
                 clow[i] = complex<double>(coef*ldig[i]/l/l/vol[i],0);
                 cmid[i] = complex<double>(1+coef*lmid[i]/l/l/vol[i],0);
@@ -245,7 +245,7 @@ void EFieldSolver::shortRange(vector<Particle> *beam, double current, double gz2
                 efield[islice] = abs(celm[0]);
             }
 
-            for (int i=0; i < npart; i++){
+            for (size_t i=0; i < npart; i++){
                 complex<double> ctemp = pow(cwork[i],m)*complex<double>(cos(l*beam->at(i).theta), sin(l*beam->at(i).theta));
                 ez[i] += 2*real(ctemp*celm[idxr[i]]);
             }

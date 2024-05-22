@@ -35,7 +35,7 @@ class Time: public StringProcessing{
    bool isTime();
    bool isScan();
    int getNodeOffset();
-   int getNodeNSlice();
+   size_t getNodeNSlice();
    bool isInitialized();
 
    void setSampleRate(double);
@@ -48,7 +48,9 @@ class Time: public StringProcessing{
    bool dotime, doscan;
    double s0,slen,ds;
    int rank, size,sample;
-   int ns_node,noff_node,nslice;
+   size_t ns_node;
+   int noff_node;
+   size_t nslice;
    bool initialized;
 };
 
@@ -62,7 +64,7 @@ inline double Time::getTimeWindowLength(){ return slen; }
 inline bool Time::isTime(){ return dotime; }
 inline bool Time::isScan(){ return doscan; }
 inline int Time::getNodeOffset(){ return noff_node; }
-inline int Time::getNodeNSlice(){ return ns_node; }
+inline size_t Time::getNodeNSlice(){ return ns_node; }
 inline bool Time::isInitialized(){ return initialized; }
 
 inline double Time::getSampleRate()

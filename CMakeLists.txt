@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS '-lstdc++')
 
 # developer options
 #set(CMAKE_VERBOSE_MAKEFILE ON)
-#add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall -Wextra -Qunused-arguments -Wno-unused-parameter -Wno-unused-variable -Wno-unused-private-field)
 
 # OpenMPI: preprocessor macro to disable C++ interface (then we don't have to link libmpi_cxx)
 add_compile_definitions(OMPI_SKIP_MPICXX)

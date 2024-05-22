@@ -125,7 +125,7 @@ bool Gencore::run(Beam *beam, vector<Field*> *field, Setup *setup, Undulator *un
 	    int shift=beam->sort();
 
 	    if (shift!=0){
-	      for (int i=0;i<field->size();i++){
+	      for (size_t i=0;i<field->size();i++){
 		      control->applySlippage(shift, field->at(i));
 	      }
 	    }
@@ -134,7 +134,7 @@ bool Gencore::run(Beam *beam, vector<Field*> *field, Setup *setup, Undulator *un
 	  // ---------------------------------------
 	  // step 4 - Advance radiation field
 
-	  for (int i=0; i<field->size();i++){
+	  for (size_t i=0; i<field->size();i++){
 	    field->at(i)->track(delz,beam,und);
 	  }
 
@@ -142,7 +142,7 @@ bool Gencore::run(Beam *beam, vector<Field*> *field, Setup *setup, Undulator *un
 	  //-----------------------------------------
 	  // step 5 - Apply slippage
 
-	  for (int i=0;i<field->size();i++){
+	  for (size_t i=0;i<field->size();i++){
 	    control->applySlippage(und->slippage(), field->at(i));  
 	  }
 
@@ -150,7 +150,7 @@ bool Gencore::run(Beam *beam, vector<Field*> *field, Setup *setup, Undulator *un
 	  // step 6 - Calculate beam parameter stored into a buffer for output
 
 	  //beam->diagnostics(und->outstep(),und->getz());
-	  //for (int i=0;i<field->size();i++){
+	  //for (size_t i=0;i<field->size();i++){
 	  //  field->at(i)->diagnostics(und->outstep());
 	  //}
 
@@ -172,7 +172,7 @@ bool Gencore::run(Beam *beam, vector<Field*> *field, Setup *setup, Undulator *un
 	    int shift=beam->sort();
 
 	    if (shift!=0){
-	      for (int i=0;i<field->size();i++){
+	      for (size_t i=0;i<field->size();i++){
 		    control->applySlippage(shift, field->at(i));
 	      }
 	    }

@@ -87,11 +87,11 @@ class Diagnostic{
     std::vector<DiagFieldBase*> dfield {new DiagField(), new DiagFieldUser()};
 
 
-    int nz = 1;
-    int ns = 1;
-    int iz = 0;
-    int noff = 0;
-    int ntotal=1;
+    size_t nz = 1;
+    size_t ns = 1;
+    size_t iz = 0;
+    size_t noff = 0;
+    size_t ntotal=1;
 
 
 public:

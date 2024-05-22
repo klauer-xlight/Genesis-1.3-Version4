@@ -3,6 +3,7 @@
 //#include "genesis_fortran_common.h"
 
 
+#include <cassert>
 #include <fstream>
 
 
@@ -32,12 +33,18 @@ Field::Field(){
 }
 
 
-void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0, double slicelen_in, double s0_in, int harm_in)
+void Field::init(int nsize_in, int ngrid_in, double dgrid_in, double xlambda0, double slicelen_in, double s0_in, int harm_in)
 {  
 
   slicelength=slicelen_in;
   s0=s0_in;
 
+
+  assert(ngrid_in > 0);
+  assert(dgrid_in > 0);
+  assert(nsize_in >= 0);
+
+  size_t nsize = nsize_in;
 
   harm=harm_in;   // harmonics
   xlambda=xlambda0/static_cast<double>(harm);   // wavelength : xlambda0 is the reference wavelength of the fundamental
@@ -51,7 +58,7 @@ void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0, doub
   }
   
   if (field[0].size()!=ngrid*ngrid){
-    for (int i=0;i<nsize;i++){
+    for (size_t i=0;i<nsize;i++){
         field[i].resize(ngrid*ngrid); 
     } 
   } 
@@ -77,7 +84,7 @@ void Field::initDiagnostics(int nz)
 {
   idx=0;
   accuslip=0;    
-  int ns=field.size();
+  size_t ns=field.size();
 
 
   power.resize(ns*nz);
@@ -184,15 +191,15 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
   }
 
   slicelength*=static_cast<double>(harm_in);
-  int nsize=field.size();
+  size_t nsize=field.size();
 
   // step zero - calculate the radiation power, per slice
 
   vector<double> pow;
   pow.resize(nsize);
-  for (int i=0;i<nsize;i++){
+  for (size_t i=0;i<nsize;i++){
     pow[i]=0;
-    for (int k=0; k<ngrid*ngrid;k++){
+    for (size_t k=0; k<ngrid*ngrid;k++){
       complex<double> loc =field[i].at(k);  
       pow[i]+=loc.real()*loc.real()+loc.imag()*loc.imag();
     }
@@ -200,11 +207,11 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
 
  
   // step one - merge adjacent files into the first. 
-  for (int i=0; i<nsize;i=i+harm_in){
+  for (size_t i=0; i<nsize;i=i+harm_in){
     int is0= (i+first) % nsize; // loop over slices in the right order
     for (int j=1; j<harm_in; j++){
        int is1= (i+j+first) % nsize; // loop over slices to be merged
-       for (int k=0; k<ngrid*ngrid;k++){
+       for (size_t k=0; k<ngrid*ngrid;k++){
 	 field[is0].at(k)+=field[is1].at(k);  // add field to slice
        }
        pow[is0]+=pow[is1];                  // add up power
@@ -216,8 +223,8 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
   double scl=1./static_cast<double>(harm_in);
 
   int di=first % harm_in;
-  for (int i=0; i<nsize/harm_in;i++){
-     for (int k=0; k<ngrid*ngrid;k++){
+  for (size_t i=0; i<nsize/harm_in;i++){
+     for (size_t k=0; k<ngrid*ngrid;k++){
 	field[i].at(k)=field[i*harm_in+di].at(k);
      }
      pow[i]=pow[i*harm_in+di]*scl;    // calculate the normalized power
@@ -226,14 +233,14 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
 
   // step three - average field by the subharmonic number
   field.resize(nsize/harm_in);
-  for (int i=0; i<field.size();i++){
+  for (size_t i=0; i<field.size();i++){
     double powloc=0;
-    for (int k=0; k<ngrid*ngrid;k++){
+    for (size_t k=0; k<ngrid*ngrid;k++){
        complex<double> loc =field[i].at(k);  
        powloc+=loc.real()*loc.real()+loc.imag()*loc.imag();
     }
     if (pow[i]>0){
-     for (int k=0; k<ngrid*ngrid;k++){
+     for (size_t k=0; k<ngrid*ngrid;k++){
        field[i].at(k)*=sqrt(pow[i]/powloc);  // do mean average because field were added up.
      }
     }
@@ -258,7 +265,7 @@ bool Field::harmonicConversion(int harm_in, bool resample)
 
   slicelength/=static_cast<double>(harm_in);
 
-  int nloc=field.size();
+  size_t nloc=field.size();
   field.resize(nloc*harm_in);
   for (int i=nloc;i<nloc*harm_in;i++){
     field.at(i).resize(ngrid*ngrid); // allocate space
@@ -266,9 +273,9 @@ bool Field::harmonicConversion(int harm_in, bool resample)
 
   // copy old slices into full field record
   for (int i=nloc;i>0;i--){
-    for (int j=0;j<harm_in;j++){
+    for (size_t j=0;j<harm_in;j++){
       int idx=i*harm_in-1-j;
-      for (int k=0; k<ngrid*ngrid;k++){
+      for (size_t k=0; k<ngrid*ngrid;k++){
 	field[idx].at(k)=field[(i-1)].at(k);
       }
     }
@@ -292,7 +299,7 @@ void Field::diagnostics(bool output)
 
   complex<double> loc;
   double loc2[2];
-  int ds=field.size();
+  size_t ds=field.size();
   int ioff=idx*ds;
 
   double acc_power=0;

@@ -28,7 +28,7 @@ bool WriteBeamHDF5::write(string fileroot, Beam *beam, int stride)
   }
 
   s0=rank;
-  int ntotal=size*beam->beam.size();
+  size_t ntotal=size*beam->beam.size();
 
   // write global data
   // this->writeGlobal(beam->nbins,beam->one4one,beam->reflength,beam->slicelength,beam->s0,ntotal);
@@ -46,10 +46,10 @@ bool WriteBeamHDF5::write(string fileroot, Beam *beam, int stride)
   int npart=0;
   int local_nslice_written=0, global_nslice_written=0;
  
-  int smin=rank*beam->beam.size();
-  int smax=smin+beam->beam.size();
+  size_t smin=rank*beam->beam.size();
+  size_t smax=smin+beam->beam.size();
 
-  for (int i=0; i<(ntotal);i++)
+  for (size_t i=0; i<(ntotal);i++)
   {
     // if requested: selection of interesting slices
     if(beam->get_WriteFilter_active()) {
@@ -61,7 +61,7 @@ bool WriteBeamHDF5::write(string fileroot, Beam *beam, int stride)
     local_nslice_written++;
 
     char name[16];
-    sprintf(name,"slice%6.6d",i+1);
+    snprintf(name, sizeof(name), "slice%6.6zu",i+1);
     gid=H5Gcreate(fid,name,H5P_DEFAULT,H5P_DEFAULT,H5P_DEFAULT);
 
     int islice= i % beam->beam.size() ;   // count inside the given slice range
@@ -76,7 +76,7 @@ bool WriteBeamHDF5::write(string fileroot, Beam *beam, int stride)
       }
     }
 
-    int root = i /beam->beam.size();  // the current rank which sends the information of a slice
+    size_t root = i /beam->beam.size();  // the current rank which sends the information of a slice
     if (size>1){
       MPI_Bcast(&npart,1,MPI_INT,root,MPI_COMM_WORLD);
     }
@@ -208,7 +208,7 @@ int WriteBeamHDF5::write_sliceselector(Beam *beam, int idslice)
 void WriteBeamHDF5::write_sliceselector_geteffective_minmax(Beam *beam, int *min, int *max)
 {
   // note that slice count in this function begins with 1 (= as in HDF5 file containing beam dump)
-  int slice_total = size*beam->beam.size(); // total slice number (all processes)
+  size_t slice_total = size*beam->beam.size(); // total slice number (all processes)
   int slice_min = 1;
   int slice_max = slice_total;
 
